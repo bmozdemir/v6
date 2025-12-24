@@ -103,6 +103,10 @@
       }, []);
 
       useEffect(() => {
+        console.log('Modal state değişti:', modal);
+      }, [modal]);
+
+      useEffect(() => {
         document.body.style.background = darkMode ? '#1a202c' : '#f7fafc';
         document.body.style.color = darkMode ? '#e2e8f0' : '#1a202c';
         localStorage.setItem('darkMode', darkMode);
@@ -831,8 +835,15 @@
                     </div>
                     
                     <button
-                      onClick={() => setModal('supabaseSettings')}
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg font-semibold transition"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Buton tıklandı!');
+                        setModal('supabaseSettings');
+                      }}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg font-semibold transition cursor-pointer"
+                      style={{ pointerEvents: 'auto' }}
                     >
                       ⚙️ Supabase Ayarlarını Yap
                     </button>
@@ -876,8 +887,14 @@
                     </button>
                     
                     <button
-                      onClick={() => setModal('supabaseSettings')}
-                      className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg text-sm transition"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setModal('supabaseSettings');
+                      }}
+                      className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg text-sm transition cursor-pointer"
+                      style={{ pointerEvents: 'auto' }}
                     >
                       ⚙️ Supabase Ayarları
                     </button>
@@ -896,8 +913,15 @@
 
             {/* Supabase Settings Modal - Login ekranında da çalışması için */}
             {modal === 'supabaseSettings' && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-enter">
-                <div className="bg-white rounded-xl p-6 w-full max-w-2xl text-black max-h-[90vh] overflow-y-auto">
+              <div 
+                className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999] modal-enter"
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) {
+                    setModal('');
+                  }
+                }}
+              >
+                <div className="bg-white rounded-xl p-6 w-full max-w-2xl text-black max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                   <h2 className="text-2xl font-bold mb-4">🔗 Supabase Veritabanı Ayarları</h2>
                   
                   <div className="space-y-4 mb-6">
@@ -937,13 +961,23 @@
                   
                   <div className="flex gap-3">
                     <button
-                      onClick={saveSupabaseConfig}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        saveSupabaseConfig();
+                      }}
                       className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
                     >
                       ✅ Kaydet ve Bağlan
                     </button>
                     <button
-                      onClick={() => setModal('')}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setModal('');
+                      }}
                       className="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-lg font-semibold transition"
                     >
                       ❌ İptal
@@ -1773,15 +1807,25 @@
                   
                   <div className="space-y-4">
                     <button
-                      onClick={() => setModal('supabaseSettings')}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setModal('supabaseSettings');
+                      }}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition cursor-pointer"
                     >
                       ⚙️ Supabase Ayarlarını Düzenle
                     </button>
                     
                     <button
-                      onClick={testSupabaseConnection}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        testSupabaseConnection();
+                      }}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition cursor-pointer"
                     >
                       🔍 Bağlantıyı Test Et
                     </button>
@@ -1895,8 +1939,15 @@
 
           {/* MODALS - Tüm modaller burada */}
           {modal === 'supabaseSettings' && currentUser && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-enter">
-              <div className="bg-white rounded-xl p-6 w-full max-w-2xl text-black max-h-[90vh] overflow-y-auto">
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999] modal-enter"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setModal('');
+                }
+              }}
+            >
+              <div className="bg-white rounded-xl p-6 w-full max-w-2xl text-black max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 <h2 className="text-2xl font-bold mb-4">🔗 Supabase Veritabanı Ayarları</h2>
                 
                 <div className="space-y-4 mb-6">
@@ -1936,13 +1987,23 @@
                 
                 <div className="flex gap-3">
                   <button
-                    onClick={saveSupabaseConfig}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      saveSupabaseConfig();
+                    }}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
                   >
                     ✅ Kaydet ve Bağlan
                   </button>
                   <button
-                    onClick={() => setModal('')}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setModal('');
+                    }}
                     className="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-lg font-semibold transition"
                   >
                     ❌ İptal
