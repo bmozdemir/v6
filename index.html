@@ -812,86 +812,147 @@
 
       if (!currentUser) {
         return (
-          <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md fade-in">
-              <div className="text-center mb-8">
-                <div className="text-6xl mb-4">🏪</div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Ürün Yönetim Pro
-                </h1>
-                <p className="text-gray-500 mt-2">Profesyonel Stok ve Satış Yönetimi</p>
+          <>
+            <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md fade-in">
+                <div className="text-center mb-8">
+                  <div className="text-6xl mb-4">🏪</div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Ürün Yönetim Pro
+                  </h1>
+                  <p className="text-gray-500 mt-2">Profesyonel Stok ve Satış Yönetimi</p>
+                </div>
+                
+                {!isSupabaseConnected ? (
+                  <div className="space-y-4">
+                    <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
+                      <p className="text-yellow-800 text-center font-semibold mb-2">⚠️ Veritabanı Bağlantısı Gerekli</p>
+                      <p className="text-sm text-yellow-700 text-center">Devam etmek için önce Supabase ayarlarınızı yapılandırın</p>
+                    </div>
+                    
+                    <button
+                      onClick={() => setModal('supabaseSettings')}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg font-semibold transition"
+                    >
+                      ⚙️ Supabase Ayarlarını Yap
+                    </button>
+                    
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <p className="text-sm text-gray-600 mb-2"><strong>📝 Supabase Nasıl Kurulur?</strong></p>
+                      <ol className="text-xs text-gray-600 space-y-1 list-decimal list-inside">
+                        <li>supabase.com adresine gidin</li>
+                        <li>Ücretsiz hesap oluşturun</li>
+                        <li>Yeni proje oluşturun</li>
+                        <li>Settings → API → URL ve anon key'i kopyalayın</li>
+                        <li>Yukarıdaki butona tıklayıp yapıştırın</li>
+                      </ol>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <input 
+                      type="text" 
+                      placeholder="👤 Kullanıcı Adı" 
+                      value={loginForm.username} 
+                      onChange={e => setLoginForm({...loginForm, username: e.target.value})} 
+                      className="w-full px-4 py-3 border-2 rounded-lg mb-3 focus:border-blue-500 outline-none transition"
+                    />
+                    
+                    <input 
+                      type="password" 
+                      placeholder="🔒 Şifre" 
+                      value={loginForm.password} 
+                      onChange={e => setLoginForm({...loginForm, password: e.target.value})} 
+                      onKeyPress={e => e.key === 'Enter' && handleLogin()} 
+                      className="w-full px-4 py-3 border-2 rounded-lg mb-4 focus:border-blue-500 outline-none transition"
+                    />
+                    
+                    <button 
+                      onClick={handleLogin} 
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg font-semibold transition disabled:opacity-50 mb-3"
+                    >
+                      {loading ? '⏳ Giriş yapılıyor...' : '🚀 Giriş Yap'}
+                    </button>
+                    
+                    <button
+                      onClick={() => setModal('supabaseSettings')}
+                      className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg text-sm transition"
+                    >
+                      ⚙️ Supabase Ayarları
+                    </button>
+                    
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                      <p className="text-center text-sm text-gray-600">
+                        <strong>Demo Hesap:</strong><br/>
+                        Kullanıcı: admin<br/>
+                        Şifre: admin123
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
-              
-              {!isSupabaseConnected ? (
-                <div className="space-y-4">
-                  <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
-                    <p className="text-yellow-800 text-center font-semibold mb-2">⚠️ Veritabanı Bağlantısı Gerekli</p>
-                    <p className="text-sm text-yellow-700 text-center">Devam etmek için önce Supabase ayarlarınızı yapılandırın</p>
+            </div>
+
+            {/* Supabase Settings Modal - Login ekranında da çalışması için */}
+            {modal === 'supabaseSettings' && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-enter">
+                <div className="bg-white rounded-xl p-6 w-full max-w-2xl text-black max-h-[90vh] overflow-y-auto">
+                  <h2 className="text-2xl font-bold mb-4">🔗 Supabase Veritabanı Ayarları</h2>
+                  
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Supabase Project URL *</label>
+                      <input
+                        type="text"
+                        placeholder="https://xxxxx.supabase.co"
+                        value={supabaseConfig.url}
+                        onChange={e => setSupabaseConfig({...supabaseConfig, url: e.target.value})}
+                        className="w-full px-4 py-3 border-2 rounded-lg focus:border-blue-500 outline-none"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold mb-2">Anon Public Key *</label>
+                      <textarea
+                        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        value={supabaseConfig.key}
+                        onChange={e => setSupabaseConfig({...supabaseConfig, key: e.target.value})}
+                        className="w-full px-4 py-3 border-2 rounded-lg focus:border-blue-500 outline-none font-mono text-xs"
+                        rows={5}
+                      ></textarea>
+                    </div>
                   </div>
                   
-                  <button
-                    onClick={() => setModal('supabaseSettings')}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg font-semibold transition"
-                  >
-                    ⚙️ Supabase Ayarları
-                  </button>
-                  
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-sm text-gray-600 mb-2"><strong>📝 Supabase Nasıl Kurulur?</strong></p>
-                    <ol className="text-xs text-gray-600 space-y-1 list-decimal list-inside">
-                      <li>supabase.com adresine gidin</li>
-                      <li>Ücretsiz hesap oluşturun</li>
-                      <li>Yeni proje oluşturun</li>
-                      <li>Settings → API → URL ve anon key'i kopyalayın</li>
-                      <li>Yukarıdaki butona tıklayıp yapıştırın</li>
+                  <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6">
+                    <p className="text-sm font-semibold text-blue-900 mb-2">📋 Nasıl Bulabilirim?</p>
+                    <ol className="text-xs text-blue-800 space-y-1 list-decimal list-inside">
+                      <li>supabase.com adresine gidip giriş yapın</li>
+                      <li>Projenizi seçin</li>
+                      <li>Sol menüden "Settings" → "API" sayfasına gidin</li>
+                      <li>"Project URL" ve "anon public" key'i kopyalayın</li>
+                      <li>Yukarıdaki alanlara yapıştırın</li>
                     </ol>
                   </div>
-                </div>
-              ) : (
-                <>
-                  <input 
-                    type="text" 
-                    placeholder="👤 Kullanıcı Adı" 
-                    value={loginForm.username} 
-                    onChange={e => setLoginForm({...loginForm, username: e.target.value})} 
-                    className="w-full px-4 py-3 border-2 rounded-lg mb-3 focus:border-blue-500 outline-none transition"
-                  />
                   
-                  <input 
-                    type="password" 
-                    placeholder="🔒 Şifre" 
-                    value={loginForm.password} 
-                    onChange={e => setLoginForm({...loginForm, password: e.target.value})} 
-                    onKeyPress={e => e.key === 'Enter' && handleLogin()} 
-                    className="w-full px-4 py-3 border-2 rounded-lg mb-4 focus:border-blue-500 outline-none transition"
-                  />
-                  
-                  <button 
-                    onClick={handleLogin} 
-                    disabled={loading}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:shadow-lg font-semibold transition disabled:opacity-50 mb-3"
-                  >
-                    {loading ? '⏳ Giriş yapılıyor...' : '🚀 Giriş Yap'}
-                  </button>
-                  
-                  <button
-                    onClick={() => setModal('supabaseSettings')}
-                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg text-sm transition"
-                  >
-                    ⚙️ Supabase Ayarları
-                  </button>
-                  
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <p className="text-center text-sm text-gray-600">
-                      <strong>Demo Hesap:</strong><br/>
-                      Kullanıcı: admin<br/>
-                      Şifre: admin123
-                    </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={saveSupabaseConfig}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+                    >
+                      ✅ Kaydet ve Bağlan
+                    </button>
+                    <button
+                      onClick={() => setModal('')}
+                      className="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-lg font-semibold transition"
+                    >
+                      ❌ İptal
+                    </button>
                   </div>
-                </>
-              )}
-            </div>
-          </div>
+                </div>
+              </div>
+            )}
+          </>
         );
       }
 
@@ -1711,42 +1772,19 @@
                   </div>
                   
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-semibold mb-2">Supabase URL *</label>
-                      <input
-                        type="text"
-                        placeholder="https://xxx.supabase.co"
-                        value={supabaseConfig.url}
-                        onChange={e => setSupabaseConfig({...supabaseConfig, url: e.target.value})}
-                        className="w-full px-4 py-3 border-2 rounded-lg text-black focus:border-blue-500 outline-none"
-                      />
-                    </div>
+                    <button
+                      onClick={() => setModal('supabaseSettings')}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                    >
+                      ⚙️ Supabase Ayarlarını Düzenle
+                    </button>
                     
-                    <div>
-                      <label className="block text-sm font-semibold mb-2">Anon Public Key *</label>
-                      <textarea
-                        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                        value={supabaseConfig.key}
-                        onChange={e => setSupabaseConfig({...supabaseConfig, key: e.target.value})}
-                        className="w-full px-4 py-3 border-2 rounded-lg text-black focus:border-blue-500 outline-none font-mono text-sm"
-                        rows={4}
-                      ></textarea>
-                    </div>
-                    
-                    <div className="flex gap-3 flex-wrap">
-                      <button
-                        onClick={saveSupabaseConfig}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
-                      >
-                        💾 Kaydet ve Bağlan
-                      </button>
-                      <button
-                        onClick={testSupabaseConnection}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition"
-                      >
-                        🔍 Bağlantıyı Test Et
-                      </button>
-                    </div>
+                    <button
+                      onClick={testSupabaseConnection}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                    >
+                      🔍 Bağlantıyı Test Et
+                    </button>
                   </div>
                   
                   <div className="mt-6 p-4 bg-blue-50 rounded-lg">
@@ -1756,7 +1794,7 @@
                       <li>Dashboard'da "New Project" butonuna tıklayın</li>
                       <li>Proje adı ve şifre belirleyin</li>
                       <li>Sol menüden "Settings" → "API" sayfasına gidin</li>
-                      <li>"Project URL" ve "anon public" key'i kopyalayıp yukarıya yapıştırın</li>
+                      <li>"Project URL" ve "anon public" key'i kopyalayıp yukarıdaki butona tıklayarak yapıştırın</li>
                       <li>"SQL Editor" bölümünden gerekli tabloları oluşturun</li>
                     </ol>
                   </div>
@@ -1855,8 +1893,8 @@
             )}
           </div>
 
-          {/* MODALS */}
-          {modal === 'supabaseSettings' && (
+          {/* MODALS - Tüm modaller burada */}
+          {modal === 'supabaseSettings' && currentUser && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-enter">
               <div className="bg-white rounded-xl p-6 w-full max-w-2xl text-black max-h-[90vh] overflow-y-auto">
                 <h2 className="text-2xl font-bold mb-4">🔗 Supabase Veritabanı Ayarları</h2>
